@@ -10,8 +10,10 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <strings.h>
 #include <unistd.h>
+#include <err.h>
 
 #include "finance.h"
 
@@ -22,7 +24,7 @@ static char *progname;
  */
 void
 usage (void) {
-	printf("Usage: %s [-h] [-v] file ...\n", progname);
+	printf("Usage: %s [-h] [-v] [-t months] file ...\n", progname);
 }
 
 int
@@ -31,6 +33,8 @@ main (int argc, char **argv)
 	int verbose = 0;
 	int ch;
 	char *ptr;
+	int months;
+	struct monthexp *expenses;
 
 	/*
 	 * Find the program name to be used for error messages and usage
@@ -41,10 +45,13 @@ main (int argc, char **argv)
 	/*
 	 * getopt magic
 	 */
-	while ((ch = getopt(argc, argv, "hv")) != -1) {
+	while ((ch = getopt(argc, argv, "hvt:")) != -1) {
 		switch (ch) {
 			case 'v':
 				verbose = 1;
+				break;
+			case 't':
+				months = atoi(optarg);
 				break;
 			case 'h':
 			default:
@@ -63,11 +70,20 @@ main (int argc, char **argv)
 		usage();
 		goto graceful_exit;
 	}
+
+	/*
+	 * t months, huh?
+	 */
+	expenses = init_expenses(months);
+	if (!expenses) {
+		errx(1, "unable to allocate memory");
+	}
+
 	/*
 	 * Main input file processing ...
 	 */
 	for (ch = 0; ch < argc; ch++) {
-		if (process_file(argv[ch]) < 0) {
+		if (process_file(expenses, months, argv[ch]) < 0) {
 			return 1;
 		}
 	}
@@ -75,9 +91,11 @@ main (int argc, char **argv)
 	/*
 	 * Display results
 	 */
-	if (display_finance(verbose) < 0) {
+	if (display_finance(expenses, months, verbose) < 0) {
 		return 1;
 	}
+
+	cleanup_expenses(expenses);
 
 graceful_exit:
 	return 0;

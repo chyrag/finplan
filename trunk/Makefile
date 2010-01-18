@@ -8,6 +8,6 @@ CFLAGS+= -O2 -g
 NO_MAN = yes
 
 test:
-	$(PROG) -v input
+	$(PROG) -v -t 24 input
 
 .include <bsd.prog.mk>

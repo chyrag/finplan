@@ -104,8 +104,7 @@ Design specs
 Approach 1:
 
 For each month for next year, or the time period given, have an entry in a
-linked list. The linked list node would just look like (an array would do just
-fine, if the number of months to be predicted is not going to be too much):
+pre-allocated array. The array is of structures with the following fields:
 
 uint year
 uint month
@@ -115,7 +114,7 @@ linked_list of broken_down_expenses
     (this linked list would be just expense description and amount)
 
 Then for each line of input read from the files, keep adding the expenses to
-the nodes.
+the members of the array.
 
 In the end display the list of months/nodes.
 
