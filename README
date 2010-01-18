@@ -1,0 +1,128 @@
+# $Id$
+
+Finance planner
+Chirag Kantharia <chirag@kantharia.in>
+Fri Jan 15 22:51:08 IST 2010
+Version 0.1
+
+
+Functional specs:
+------------------------------------------------------------------------
+Eg: Input is this:
+
+> Monthly rent: 15000
+> Monthly telecom bill: 3000
+> Monthly electricity bill: 500
+> Monthly budget for groceries: 3000
+> Monthly home loan EMI: 8000
+> Monthly money transfer for mom: 2000
+> Monthly salaries for maid and car cleaner: 1500
+> Monthly budget for petrol: 1000
+> Monthly money transfer for soumia: 20000
+> 
+> Annual LIC premium: 29500 + 511
+> Annual Birla Insurance premium: 51000
+> 
+> Upcoming expenses (given a time period):
+> Furniture (3 months): 20000
+> Soha (1 year): 100000
+> Advance Tax (1 month): 10000
+> 
+> Initial Savings: 50000
+> Intended Savings per month: 20000
+> 
+> Goal: Jan 2011: 200000
+> Annual compensation: 1000000 (do we need it?)
+
+Output would be:
+
+1. Whether one can meet the goal or not, with the intended savings. If not,
+then what is the savings required per month to achieve the goal.
+
+2. Expenses output for each month for next 12, 24 or 36 months including
+expected savings by that time. For each month print, total expenses + expected
+savings.
+
+3. If options for the Goal (time frame) are left out, then, how long would it
+be, when we would have had the goal amount.
+
+Eg: input file would look like:
+
+Format is: C:opts:Comment:Amount
+
+C = character 'M' for mandatory expense (no adjustment possible)
+              'B' for budgetary expense (sloppa adjustment can be made)
+              'A' for annual
+	      'U' for upcoming
+	      'I' for initial savings
+	      'S' for monthly intended savings
+	      'G' for goals
+
+opts = options depending on the expense periodicity. The options are:
+    'A' Option for annual: month name in short (Jan, Feb, Apr etc)
+    'U' Option for upcoming: time frame in to buy/spend/purchase:
+	The timeframe could be 1M, 2M, 3Y to denote 1 month, 2 months, 3 years
+	etc. Less than 1 month timeframe is bad planning.
+    No options for mandatory or budgetary expenses, initial savings, and
+    monthly savings as of now
+
+Comment: reason for the expense or one line description of the expense
+Amount: the amount in rupees
+
+I:50000
+S:20000
+M:House Rent: 15000
+M:Telecom Bill: 3000
+B:Soumia: 20000
+A:Jan:LIC Premium for policy no. XXXX: 29500
+A:Oct:LIC Premium for policy no. YYYY: 511
+U:1M:Advance Tax: 10000
+U:1Y:Soha: 100000
+G:Jan 2010: 200000
+
+Output:
+
+Goal comment: can be reached, is not possible. If not possible, then, increase
+the savings, or tone down the budgetary expenses (+-10%? - this can be passed
+as an option)
+
+Jan 2010
+Total expenses: 45000
+Total savings: 20000
+
+Feb 2010
+Total expenses: 46000
+Total savinsg: 40000
+
+Verbose output would include the breakdown of the total expenses. Also need to
+predict when I would be in position to spend on upcoming expenses.
+
+
+Design specs
+------------------------------------------------------------------------
+
+Approach 1:
+
+For each month for next year, or the time period given, have an entry in a
+linked list. The linked list node would just look like (an array would do just
+fine, if the number of months to be predicted is not going to be too much):
+
+uint year
+uint month
+uint total_expenses
+uint total_savings
+linked_list of broken_down_expenses
+    (this linked list would be just expense description and amount)
+
+Then for each line of input read from the files, keep adding the expenses to
+the nodes.
+
+In the end display the list of months/nodes.
+
+
+Approach 2:
+
+Add to a linked list the type of expenses. Essentially, the records in the
+input file get added to a linked list. Keep the linked list sorted
+chronologically.
+
