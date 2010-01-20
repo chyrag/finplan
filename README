@@ -1,5 +1,3 @@
-# $Id$
-
 Finance planner
 Chirag Kantharia <chirag@kantharia.in>
 Fri Jan 15 22:51:08 IST 2010
@@ -116,12 +114,15 @@ linked_list of broken_down_expenses
 Then for each line of input read from the files, keep adding the expenses to
 the members of the array.
 
-In the end display the list of months/nodes.
+In the end display the list of months/nodes, depending on the arguments passed
+to the program.
 
+The expenses read from the input file can be added to a linked list, and used
+to do some validation to prevent nasty surprises later. Eg, one could specify
+initial capital or intended savings twice. On a side note, it would be good to
+have the intended savings to take on an argument (month/year), where on, the
+intended savings can change.
 
-Approach 2:
-
-Add to a linked list the type of expenses. Essentially, the records in the
-input file get added to a linked list. Keep the linked list sorted
-chronologically.
+All these function to read options, to get the amount from the line, should be
+in utils.c.
 

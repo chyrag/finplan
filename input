@@ -1,4 +1,11 @@
 I:50000
-M:Monthly rent: 15000
-B:Telecom bill: 3000
-A:Premium for LIC policy no. 1234: 29500
+S:20000
+M:House Rent: 15000
+B:Telecom Bill: 3000
+
+B:Soumia: 20000
+A:Jan:LIC Premium for policy no. XXXX: 29500
+A:Oct:LIC Premium for policy no. YYYY: 511
+U:1M:Advance Tax: 10000
+U:1Y:Soha: 100000
+G:Jan 2010: 200000
