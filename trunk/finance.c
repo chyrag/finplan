@@ -90,7 +90,7 @@ display_finance(struct monthexp *exp, int months, int verbose)
 	int m;
 
 	for (m = 0; m < months; m++) {
-		printf("%s %d\n", monthnames[exp[m].month], exp[m].year);
+		printf("%s %d\n", monthname(exp[m].month), exp[m].year);
 		printf("Expenses: %d\n", exp[m].expenses);
 		printf("Savings: %d\n", exp[m].savings);
 		printf("\n");
