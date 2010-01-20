@@ -1,9 +1,5 @@
 /*
- * $Id$
- *
- * finance.c:
- *
- * Little more description of the program
+ * finance.c: main guts of the program
  *
  * Chirag Kantharia <chirag@kantharia.in>
  * Jan 2010
@@ -12,24 +8,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <time.h>
 #include <err.h>
 #include <sys/types.h>
 #include "finance.h"
-
-int
-get_last_field(char *line)
-{
-	char *ptr = strrchr(line, SEPERATOR);
-
-	if (ptr) {
-		return atoi(ptr+1);
-	}
-
-	return 0;
-}
+#include "utils.h"
 
 int
 process_file(struct monthexp *exp, int months, char *filename)
@@ -47,6 +29,9 @@ process_file(struct monthexp *exp, int months, char *filename)
 	memset(buf, 0, BUFSIZ);
 	while (fgets(buf, BUFSIZ, fp)) {
 		switch (buf[0]) {
+			case '#':
+				/* skip comment */
+				break;
 			case 'M':
 			case 'B':
 				/* monthly expense */
@@ -71,7 +56,7 @@ process_file(struct monthexp *exp, int months, char *filename)
 			case 'S':
 				/* intended savings */
 				savings = get_last_field(buf);
-				if (savedings < 0) {
+				if (savings < 0) {
 					/* FIXME: error */
 				}
 				break;
@@ -87,7 +72,9 @@ process_file(struct monthexp *exp, int months, char *filename)
 				/* read further options */
 				break;
 			default:
-				warn("Unknown option %c", buf[0]);
+				/*
+				 * skip lines which are not handled as yet
+				 */
 				break;
 		}
 		lines++;
@@ -114,21 +101,20 @@ struct monthexp *
 init_expenses(int months)
 {
 	struct monthexp *exp;
-	struct tm *tm;
-	int m, y;
-	time_t now;
+	int cur_mon, cur_year, m, y;
+
+	if (get_month_year(&cur_mon, &cur_year) < 0) {
+		return NULL;
+	}
 
 	exp = malloc(months * sizeof(struct monthexp));
 	if (exp) {
-		now = time(NULL);
-		tm = localtime(&now);
-
 		for (m = 0, y = 0; m < months; m++) {
-			exp[m].month = (tm->tm_mon + m + 1) % MONTHS_PER_YEAR;
+			exp[m].month = (cur_mon + m + 1) % MONTHS_PER_YEAR;
 			if (exp[m].month == 0) {
 				y++;
 			}
-			exp[m].year = tm->tm_year + 1900 + y;
+			exp[m].year = cur_year + y;
 			exp[m].expenses = 0;
 			exp[m].savings = 0;
 		}

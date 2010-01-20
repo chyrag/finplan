@@ -1,9 +1,5 @@
 /*
- * $Id$
- *
- * finance.h:
- *
- * Little more description of the program
+ * finance.h: declarations for finance functions
  *
  * Chirag Kantharia <chirag@kantharia.in>
  * Jan 2010
@@ -14,8 +10,6 @@
 
 #define DEFAULT_TIMELINE	12	/* months */
 #define MONTHS_PER_YEAR		12
-
-#define SEPERATOR		':'
 
 struct monthexp {
 	uint8_t		month;

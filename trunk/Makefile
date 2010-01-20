@@ -1,7 +1,7 @@
-# $Id$
-
 PROG=	fin
-SRCS=	main.c finance.c
+SRCS=	main.c \
+	finance.c \
+	utils.c
 
 CFLAGS+= -O2 -g
 

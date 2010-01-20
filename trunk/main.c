@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * Finance planner
  *
  * Little more description of the program
@@ -33,7 +31,7 @@ main (int argc, char **argv)
 	int verbose = 0;
 	int ch;
 	char *ptr;
-	int months;
+	int months = DEFAULT_TIMELINE;
 	struct monthexp *expenses;
 
 	/*
