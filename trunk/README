@@ -101,6 +101,15 @@ Design specs
 
 Approach 1:
 
+Read the input lines, and add the expenses to a linked list for expenses. Each
+node would be type:
+
+uint type; /* 'M', 'A', 'B' */
+
+Then, we have a linked list for goals (Shall deal with upcoming expenses
+later). Initial and savings are not added to a linked list, but saved to a
+global variable.
+
 For each month for next year, or the time period given, have an entry in a
 pre-allocated array. The array is of structures with the following fields:
 
@@ -126,3 +135,17 @@ intended savings can change.
 All these function to read options, to get the amount from the line, should be
 in utils.c.
 
+
+Implementation specs
+------------------------------------------------------------------------
+
+So, the flow would look like:
+
+1. Read input (add to the linked lists)
+2. Validate input
+3. Pre-allocate buffers for holding expenses
+4. For each month, traverse the linked list adding expenses: we will need to
+   traverse the list for each month because:
+   - intended savings for a particular month may change
+   - making budgetary decisions per month is feasible
+5. Display as requested
