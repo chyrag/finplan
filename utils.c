@@ -10,6 +10,20 @@
 #include <stdlib.h>
 #include "utils.h"
 
+static const char *monthnames[] = {
+	"Jan",
+	"Feb",
+	"Mar",
+	"Apr",
+	"May",
+	"Jun",
+	"Jul",
+	"Aug",
+	"Sep",
+	"Oct",
+	"Nov",
+	"Dec",
+};
 
 /*
  * Get the expense amount from the line
@@ -56,21 +70,6 @@ get_month_year (int *m, int *y)
 	return 0;
 }
 
-
-static const char *monthnames[] = {
-	"Jan",
-	"Feb",
-	"Mar",
-	"Apr",
-	"May",
-	"Jun",
-	"Jul",
-	"Aug",
-	"Sep",
-	"Oct",
-	"Nov",
-	"Dec",
-};
 
 const char *
 monthname (int n)

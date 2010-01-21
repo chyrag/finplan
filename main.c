@@ -12,7 +12,9 @@
 #include <strings.h>
 #include <unistd.h>
 #include <err.h>
+#include <sys/queue.h>
 
+#include "utils.h"
 #include "finance.h"
 
 static char *progname;
@@ -31,8 +33,11 @@ main (int argc, char **argv)
 	int verbose = 0;
 	int ch;
 	char *ptr;
+
 	int months = DEFAULT_TIMELINE;
-	struct monthexp *expenses;
+	struct monthlyexp *expenselist;
+
+	SLIST_ENTRY(expense) exp;
 
 	/*
 	 * Find the program name to be used for error messages and usage
@@ -70,30 +75,42 @@ main (int argc, char **argv)
 	}
 
 	/*
-	 * t months, huh?
-	 */
-	expenses = init_expenses(months);
-	if (!expenses) {
-		errx(1, "unable to allocate memory");
-	}
-
-	/*
-	 * Main input file processing ...
+	 * FIXME: Step 1: Read input
 	 */
 	for (ch = 0; ch < argc; ch++) {
-		if (process_file(expenses, months, argv[ch]) < 0) {
+		if (process_file(exp, months, argv[ch]) < 0) {
 			return 1;
 		}
 	}
 
 	/*
-	 * Display results
+	 * FIXME: Step 2: Validate input
 	 */
-	if (display_finance(expenses, months, verbose) < 0) {
+
+
+	/*
+	 * Step 3: Expenses array
+	 */
+	expenselist = init_expenselist(months);
+	if (!expenselist) {
+		errx(1, "unable to allocate memory");
+	}
+
+	/*
+	 * Step 4: Main expense processing
+	 */
+
+	/*
+	 * Step 5: Display results
+	 */
+	if (display_finance(expenselist, months, verbose) < 0) {
 		return 1;
 	}
 
-	cleanup_expenses(expenses);
+	/*
+	 * Step 6: Cleanup
+	 */
+	cleanup_expenselist(expenselist);
 
 graceful_exit:
 	return 0;
