@@ -10,11 +10,11 @@
 #include <string.h>
 #include <err.h>
 #include <sys/types.h>
-#include "finance.h"
 #include "utils.h"
+#include "finance.h"
 
 int
-process_file(struct monthexp *exp, int months, char *filename)
+process_file(SLIST_ENTRY(expense) exp, int months, char *filename)
 {
 	FILE *fp;
 	char buf[BUFSIZ];
@@ -85,7 +85,7 @@ process_file(struct monthexp *exp, int months, char *filename)
 }
 
 int
-display_finance(struct monthexp *exp, int months, int verbose)
+display_finance(struct monthlyexp *exp, int months, int verbose)
 {
 	int m;
 
@@ -97,17 +97,17 @@ display_finance(struct monthexp *exp, int months, int verbose)
 	}
 }
 
-struct monthexp *
-init_expenses(int months)
+struct monthlyexp *
+init_expenselist(int months)
 {
-	struct monthexp *exp;
+	struct monthlyexp *exp;
 	int cur_mon, cur_year, m, y;
 
 	if (get_month_year(&cur_mon, &cur_year) < 0) {
 		return NULL;
 	}
 
-	exp = malloc(months * sizeof(struct monthexp));
+	exp = malloc(months * sizeof(struct monthlyexp));
 	if (exp) {
 		for (m = 0, y = 0; m < months; m++) {
 			exp[m].month = (cur_mon + m + 1) % MONTHS_PER_YEAR;
@@ -124,7 +124,7 @@ init_expenses(int months)
 }
 
 void
-cleanup_expenses(struct monthexp *expenses)
+cleanup_expenselist(struct monthlyexp *expenses)
 {
 	free(expenses);
 }

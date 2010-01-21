@@ -11,6 +11,24 @@
 #define SEPERATOR		':'
 #define MONTHS_PER_YEAR		12
 
+/*
+ * Months of the year
+ */
+enum month {
+	JAN,
+	FEB,
+	MAR,
+	APR,
+	MAY,
+	JUN,
+	JUL,
+	AUG,
+	SEP,
+	OCT,
+	NOV,
+	DEC,
+};
+
 int		get_last_field(char *);
 int		get_option_month(char *);
 int		get_month_year(int *, int *);
