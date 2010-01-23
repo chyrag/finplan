@@ -55,9 +55,11 @@ struct expense {
 	} opts;
 	char *comment;
 	uint32_t amount;
+
+	STAILQ_ENTRY(expense) next;
 };
 
-int 			process_file(SLIST_ENTRY(expense), int, char *);
+int 			process_file(struct expense *, char *);
 int 			display_finance(struct monthlyexp *, int , int);
 struct monthlyexp 	*init_expenselist(int);
 void 			cleanup_expenselist(struct monthlyexp *);

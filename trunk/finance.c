@@ -10,16 +10,22 @@
 #include <string.h>
 #include <err.h>
 #include <sys/types.h>
+#include <sys/queue.h>
 #include "utils.h"
 #include "finance.h"
 
+/*
+ * Parse the expenses from the given filename and add it to the list of
+ * expenses.
+ */
 int
-process_file(SLIST_ENTRY(expense) exp, int months, char *filename)
+process_file(struct expense *head, char *filename)
 {
 	FILE *fp;
 	char buf[BUFSIZ];
 	int i, lines = 0;
-	int amount, savings, savedup = 0;
+	int amount;
+	struct expense *e;
 
 	fp = fopen(filename, "r");
 	if (!fp) {
@@ -35,41 +41,14 @@ process_file(SLIST_ENTRY(expense) exp, int months, char *filename)
 			case 'M':
 			case 'B':
 				/* monthly expense */
-				/* handle monthly budgetary expense likewise
-				   for now */
 				amount = get_last_field(buf);
 				if (amount < 0) {
 					/* FIXME: error */
 				}
-				for (i = 0; i < months; i++) {
-					exp[i].expenses += amount;
-				}
-				break;
-			case 'A':
-				/* annual expense */
-				/* read further options */
-				break;
-			case 'U':
-				/* upcoming planned expense */
-				/* read further options */
-				break;
-			case 'S':
-				/* intended savings */
-				savings = get_last_field(buf);
-				if (savings < 0) {
-					/* FIXME: error */
-				}
-				break;
-			case 'I':
-				/* initial capital */
-				savedup = get_last_field(buf);
-				if (savedup < 0) {
-					/* FIXME: error */
-				}
-				break;
-			case 'G':
-				/* goals */
-				/* read further options */
+				e = malloc(sizeof(struct expense));
+				e->exptype = (buf[0] == 'M')?
+					MONTHLY : BUDGETARY;
+				e->amount = amount;
 				break;
 			default:
 				/*
