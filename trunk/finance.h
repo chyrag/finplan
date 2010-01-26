@@ -24,7 +24,7 @@ struct monthlyexp {
  * Expense type
  */
 enum expensetype {
-	MONTHLY,
+	MONTHLY = 0xa,
 	ANNUAL,
 	BUDGETARY,
 }; 
@@ -58,8 +58,9 @@ struct expense {
 
 	STAILQ_ENTRY(expense) next;
 };
+STAILQ_HEAD(expense_hdr, expense);
 
-int 			process_file(struct expense *, char *);
+int 			process_file(struct expense_hdr *, char *);
 int 			display_finance(struct monthlyexp *, int , int);
 struct monthlyexp 	*init_expenselist(int);
 void 			cleanup_expenselist(struct monthlyexp *);
