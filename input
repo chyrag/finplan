@@ -1,6 +1,9 @@
+# initial savings
 I:50000
+# intended savings
 S:20000
 M:House Rent: 15000
+# Airtel prepaid + Airtel broadband + Vodafone postpaid
 B:Telecom Bill: 3000
 
 B:Soumia: 20000

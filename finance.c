@@ -19,7 +19,7 @@
  * expenses.
  */
 int
-process_file(struct expense *head, char *filename)
+process_file(struct expense_hdr *headp, char *filename)
 {
 	FILE *fp;
 	char buf[BUFSIZ];
@@ -49,6 +49,7 @@ process_file(struct expense *head, char *filename)
 				e->exptype = (buf[0] == 'M')?
 					MONTHLY : BUDGETARY;
 				e->amount = amount;
+				STAILQ_INSERT_TAIL(headp, e, next);
 				break;
 			default:
 				/*

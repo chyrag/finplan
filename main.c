@@ -36,8 +36,9 @@ main (int argc, char **argv)
 
 	int months = DEFAULT_TIMELINE;
 	struct monthlyexp *expenselist;
-	STAILQ_HEAD(, expense) head;
-	struct expense *headp;
+	STAILQ_HEAD(expense_hdr, expense);
+	struct expense_hdr headp;
+	struct expense *e;
 
 	/*
 	 * Find the program name to be used for error messages and usage
@@ -77,14 +78,23 @@ main (int argc, char **argv)
 	/*
 	 * FIXME: Step 1: Read input
 	 */
-	STAILQ_INIT(&head);
+	STAILQ_INIT(&headp);
 	for (ch = 0; ch < argc; ch++) {
-#if 0
-		if (process_file(head, argv[ch]) < 0) {
+		if (process_file(&headp, argv[ch]) < 0) {
 			return 1;
 		}
-#endif
 	}
+
+#define DEBUG
+#ifdef DEBUG
+	ch = 0;
+	STAILQ_FOREACH(e, &headp, next) {
+		printf("%d\n", ch);
+		printf("e->exptype = %d\n", e->exptype);
+		printf("e->amount = %d\n\n", e->amount);
+		ch++;
+	}
+#endif
 
 	/*
 	 * FIXME: Step 2: Validate input
