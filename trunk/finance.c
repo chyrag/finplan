@@ -11,6 +11,7 @@
 #include <err.h>
 #include <sys/types.h>
 #include <sys/queue.h>
+
 #include "utils.h"
 #include "finance.h"
 
@@ -51,6 +52,8 @@ process_file(struct expense_hdr *headp, char *filename)
 				e->amount = amount;
 				STAILQ_INSERT_TAIL(headp, e, next);
 				break;
+			case 'S':
+				/* savings */
 			default:
 				/*
 				 * skip lines which are not handled as yet
@@ -101,6 +104,31 @@ init_expenselist(int months)
 	}
 
 	return exp;
+}
+
+int
+process_expenses(struct monthlyexp * exp, int months,
+		struct expense_hdr *headp)
+{
+	int i;
+	struct expense *e;
+	
+	/*
+	 * For each month, go over the expense list, and add to the expenses
+	 */
+	for (i = 0; i < months; i++) {
+		STAILQ_FOREACH(e, headp, next) {
+			switch (e->exptype) {
+				case BUDGETARY:
+				case MONTHLY:
+					exp[i].expenses += e->amount;
+					break;
+				default:
+					break;
+			}
+		}
+	}
+	return 0;
 }
 
 void
