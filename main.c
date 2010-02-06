@@ -112,6 +112,9 @@ main (int argc, char **argv)
 	/*
 	 * Step 4: Main expense processing
 	 */
+	if (process_expenses(expenselist, months, &headp) < 0) {
+		errx(1, "error processing expenses");
+	}
 
 	/*
 	 * Step 5: Display results
