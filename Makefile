@@ -1,7 +1,8 @@
 PROG=	fin
-SRCS=	main.c \
+SRCS=	\
 	finance.c \
-	utils.c
+	grammar.y \
+	token.l
 
 CFLAGS+= -O2 -g
 
