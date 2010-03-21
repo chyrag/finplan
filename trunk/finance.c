@@ -12,7 +12,6 @@
 #include <sys/types.h>
 #include <sys/queue.h>
 
-#include "utils.h"
 #include "finance.h"
 
 /*
@@ -42,6 +41,7 @@ process_file(struct expense_hdr *headp, char *filename)
 			case 'M':
 			case 'B':
 				/* monthly expense */
+#if 0
 				amount = get_last_field(buf);
 				if (amount < 0) {
 					/* FIXME: error */
@@ -51,6 +51,7 @@ process_file(struct expense_hdr *headp, char *filename)
 					MONTHLY : BUDGETARY;
 				e->amount = amount;
 				STAILQ_INSERT_TAIL(headp, e, next);
+#endif
 				break;
 			case 'S':
 				/* savings */
@@ -73,10 +74,12 @@ display_finance(struct monthlyexp *exp, int months, int verbose)
 	int m;
 
 	for (m = 0; m < months; m++) {
+#if 0
 		printf("%s %d\n", monthname(exp[m].month), exp[m].year);
 		printf("Expenses: %d\n", exp[m].expenses);
 		printf("Savings: %d\n", exp[m].savings);
 		printf("\n");
+#endif
 	}
 }
 
@@ -86,9 +89,11 @@ init_expenselist(int months)
 	struct monthlyexp *exp;
 	int cur_mon, cur_year, m, y;
 
+#if 0
 	if (get_month_year(&cur_mon, &cur_year) < 0) {
 		return NULL;
 	}
+#endif
 
 	exp = malloc(months * sizeof(struct monthlyexp));
 	if (exp) {
@@ -107,7 +112,7 @@ init_expenselist(int months)
 }
 
 int
-process_expenses(struct monthlyexp * exp, int months,
+calculate_expenses(struct monthlyexp * exp, int months,
 		struct expense_hdr *headp)
 {
 	int i;
