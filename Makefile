@@ -4,11 +4,11 @@ SRCS=	\
 	grammar.y \
 	token.l
 
-CFLAGS+= -O2 -g
+#CFLAGS+= -O2 -g
 
 NO_MAN = yes
 
 test:
-	$(PROG) -v -t 24 input
+	$(PROG) -v -t 24 < input
 
 .include <bsd.prog.mk>

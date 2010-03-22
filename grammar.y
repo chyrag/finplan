@@ -82,7 +82,7 @@ monthlyexpense: CHAR SEP COMMENT SEP AMOUNT
 			return -1;
 			break;
 		}
-		e->comment = strdup($3);
+		e->comment = trim($3);
 		e->amount = $5;
 
 		STAILQ_INSERT_TAIL(&headp, e, next);
@@ -101,7 +101,8 @@ annualexpense: CHAR SEP MONTH SEP COMMENT SEP AMOUNT
 		}
 		e->exptype = ANNUAL;
 		e->opts.aeo.month = monthnumber($3);
-		e->comment = strdup($5);
+		e->comment = trim($5);
+		trim(e->comment);
 		e->amount = $7;
 
 		STAILQ_INSERT_TAIL(&headp, e, next);
@@ -187,7 +188,8 @@ main (int argc, char **argv)
 	STAILQ_FOREACH(e, &headp, next) {
 		printf("%d\n", ch);
 		printf("e->exptype = %s\n", expensename(e->exptype));
-		printf("e->amount = %d\n\n", e->amount);
+		printf("e->amount = %d\n", e->amount);
+		printf("e->comment = [%s]\n\n", e->comment);
 		ch++;
 	}
 #endif

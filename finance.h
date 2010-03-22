@@ -11,6 +11,8 @@
 #define DEFAULT_TIMELINE	12	/* months */
 #define MONTHS_PER_YEAR		12
 
+#include <assert.h>
+
 enum month {
 	INVALID,
 	JAN,
@@ -54,7 +56,8 @@ monthname (int n)
 }
 
 static inline char*
-uppercase (char *name) {
+uppercase (char *name)
+{
 	int i, len;
 	
 	len = strlen(name);
@@ -67,8 +70,33 @@ uppercase (char *name) {
 	return name;
 }
 
+static inline char*
+trim (char *string)
+{
+	int i, j, len;
+	char *p;
+
+	if ((len = strlen(string)) == 0) {
+		return string;
+	}
+
+	for (i = 0;       i < len && string[i] == ' '; i++);
+	for (j = len - 1; j > 0   && string[j] == ' '; j--);
+
+	len = j - i + 1;
+	if (!(p = malloc(len + 1))) {
+		return p;
+	}
+
+	strncpy(p, &string[i], len);
+	p[len] = '\0';
+
+	return p;
+}
+
 static inline enum month
-monthnumber (char *monthname) {
+monthnumber (char *monthname)
+{
 	/*
 	 * Keeping it simple and stupid right now. Later on,
 	 * if the function is being called, then, we can

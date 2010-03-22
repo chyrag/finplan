@@ -17,13 +17,13 @@ string	[^:\n]
 
 %%
 
+#[^\n]*		/* ignore comment */
 {month}		{ yylval.string = strdup(yytext); return MONTH;   }
 {digit}+	{ yylval.number = atoi(yytext);   return AMOUNT;  }
 {char}		{ yylval.c = yytext[0]; 	  return CHAR;    }
 {string}+	{ yylval.string = strdup(yytext); return COMMENT; }
 \n		{ return NEWLINE; }
 :		{ return SEP; }
-
 
 %%
 
