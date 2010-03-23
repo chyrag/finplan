@@ -4,6 +4,8 @@ SRCS=	\
 	grammar.y \
 	token.l
 
+CFLAGS = -Wall -g
+
 NO_MAN = yes
 
 test:

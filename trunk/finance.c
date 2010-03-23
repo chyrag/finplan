@@ -22,7 +22,7 @@ uint32_t initialcapital;
 uint32_t intendedsavings;
 
 int
-get_month_year(int *m, int *y)
+get_curr_month(int *m, int *y)
 {
 	struct tm *tm;
 	time_t now;
@@ -57,20 +57,15 @@ display_finances(struct monthlyexp *exp, int months, int verbose)
 		printf("Savings: %d\n", exp[m].savings);
 		printf("\n");
 	}
+
+	return 0;
 }
 
 struct monthlyexp *
-init_expenselist(int months)
+init_expenselist(int months, int cur_mon, int cur_year)
 {
 	struct monthlyexp *exp;
-	int cur_mon, cur_year, m, y;
-
-	/*
-	 * Find the current month/year.
-	 */
-	if (get_month_year(&cur_mon, &cur_year) < 0) {
-		return NULL;
-	}
+	int m, y;
 
 	exp = malloc(months * sizeof(struct monthlyexp));
 	if (exp) {
@@ -92,21 +87,27 @@ init_expenselist(int months)
 }
 
 int
-calculate_expenses(struct monthlyexp * exp, int months,
-		struct expense_hdr *headp)
+calculate_expenses(struct monthlyexp * exp, struct expense_hdr *headp,
+		int months, int cur_mon)
 {
-	int i;
+	int i, rm;
 	struct expense *e;
 	
 	/*
 	 * For each month, go over the expense list, and add to the expenses
 	 */
 	for (i = 0; i < months; i++) {
+		rm = ((cur_mon + i) % MONTHS_PER_YEAR) + 1;
 		STAILQ_FOREACH(e, headp, next) {
 			switch (e->exptype) {
 				case BUDGETARY:
 				case MONTHLY:
 					exp[i].expenses += e->amount;
+					break;
+				case ANNUAL:
+					if (e->opts.aeo.month == rm) {
+						exp[i].expenses += e->amount;
+					}
 					break;
 				default:
 					break;

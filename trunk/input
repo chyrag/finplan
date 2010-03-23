@@ -1,19 +1,13 @@
 #
 # Monthly rent first!
 #
-
-M:MR:15225
-M: CRK:15225
-M: SMP :15225
-
+M:Monthly Rent:15225
 #
 # Airtel + Vodafone bill
 #
 B:Telecom:3000
-
 #
 # LIC premium for Chirag
 #
-
-A:Jan: Premium for LIC policy no. 123456:30000
-A:Feb: 1234:30000
+A:Jan:Premium for LIC policy no:30000
+A:Nov: Premium for LIC policy no. 7890:511
