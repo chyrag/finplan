@@ -63,7 +63,7 @@ uppercase (char *name)
 	
 	len = strlen(name);
 	for (i = 0; i < len; i++) {
-		if (name[i] > 'a' && name[i] < 'z') {
+		if (name[i] >= 'a' && name[i] <= 'z') {
 			name[i] += 'A' - 'a';
 		}
 	}
@@ -194,11 +194,10 @@ struct expense {
 };
 STAILQ_HEAD(expense_hdr, expense);
 
-struct monthlyexp *init_expenselist(int);
-int		   calculate_expenses(struct monthlyexp *, int,
-				struct expense_hdr *);
-int 		   display_finances(struct monthlyexp *, int, int);
-void 		   cleanup_expenselist(struct expense_hdr *,
-				struct monthlyexp *);
+int get_curr_month(int *, int *);
+struct monthlyexp *init_expenselist(int, int, int);
+int calculate_expenses(struct monthlyexp *, struct expense_hdr *, int, int);
+int display_finances(struct monthlyexp *, int, int);
+void cleanup_expenselist(struct expense_hdr *, struct monthlyexp *);
 
 #endif /* __FINANCE_H_ */

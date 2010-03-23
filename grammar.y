@@ -129,13 +129,12 @@ int
 main (int argc, char **argv)
 {
 	int verbose = 0;
-	int ch;
+	int ch, cmon, cyear;
 	char *ptr;
 
 	int months = DEFAULT_TIMELINE;
 	struct monthlyexp *expenselist;
 	STAILQ_HEAD(expense_hdr, expense);
-	struct expense *e;
 
 	/*
 	 * Find the program name to be used for error messages and usage
@@ -180,6 +179,13 @@ main (int argc, char **argv)
 	yyparse();
 
 	/*
+	 * Get the current month/year
+	 */
+	if (get_curr_month(&cmon, &cyear) < 0) {
+		errx(1, "unable to find current month/year");
+	}
+
+	/*
 	 * FIXME: Step 2: Validate input
 	 */
 
@@ -187,7 +193,7 @@ main (int argc, char **argv)
 	/*
 	 * Step 3: Expenses array
 	 */
-	expenselist = init_expenselist(months);
+	expenselist = init_expenselist(months, cmon, cyear);
 	if (!expenselist) {
 		errx(1, "unable to allocate memory");
 	}
@@ -195,7 +201,7 @@ main (int argc, char **argv)
 	/*
 	 * Step 4: Main expense processing
 	 */
-	if (calculate_expenses(expenselist, months, &headp) < 0) {
+	if (calculate_expenses(expenselist, &headp, months, cmon) < 0) {
 		errx(1, "error processing expenses");
 	}
 
