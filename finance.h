@@ -11,7 +11,8 @@
 #define DEFAULT_TIMELINE	12	/* months */
 #define MONTHS_PER_YEAR		12
 
-#include <assert.h>
+extern uint32_t initialcapital;
+extern uint32_t intendedsavings;
 
 enum month {
 	INVALID,
@@ -127,7 +128,7 @@ monthnumber (char *monthname)
  * Monthly expense
  */
 struct monthlyexp {
-	enum month	month;
+	enum month	month;		/* jan = 1, feb = 2, ... */
 	uint32_t	year;
 	uint32_t	expenses;
 	uint32_t	savings;
@@ -193,11 +194,11 @@ struct expense {
 };
 STAILQ_HEAD(expense_hdr, expense);
 
-int 			process_file(struct expense_hdr *, char *);
-int 			display_finance(struct monthlyexp *, int , int);
-struct monthlyexp 	*init_expenselist(int);
-int			calculate_expenses(struct monthlyexp *, int,
-					struct expense_hdr *);
-void 			cleanup_expenselist(struct monthlyexp *);
+struct monthlyexp *init_expenselist(int);
+int		   calculate_expenses(struct monthlyexp *, int,
+				struct expense_hdr *);
+int 		   display_finances(struct monthlyexp *, int, int);
+void 		   cleanup_expenselist(struct expense_hdr *,
+				struct monthlyexp *);
 
 #endif /* __FINANCE_H_ */
