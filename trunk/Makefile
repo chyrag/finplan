@@ -4,8 +4,6 @@ SRCS=	\
 	grammar.y \
 	token.l
 
-#CFLAGS+= -O2 -g
-
 NO_MAN = yes
 
 test:

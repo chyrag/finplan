@@ -53,10 +53,10 @@ initialcapitalorsavings: CHAR SEP AMOUNT
 	{
 		switch ($1) {
 		case 'I':
-			printf("Initial capital = %d\n", $3);
+			initialcapital = $3;
 			break;
 		case 'S':
-			printf("Savings per month = %d\n", $3);
+			intendedsavings = $3;
 			break;
 		}
 	}
@@ -65,7 +65,6 @@ initialcapitalorsavings: CHAR SEP AMOUNT
 monthlyexpense: CHAR SEP COMMENT SEP AMOUNT
 	{
 		struct expense *e;
-		printf("Monthly expense: %d rupees for %s.\n", $5, $3);
 		e = malloc(sizeof(struct expense));
 		if (!e) {
 			/* TODO */
@@ -92,8 +91,6 @@ monthlyexpense: CHAR SEP COMMENT SEP AMOUNT
 annualexpense: CHAR SEP MONTH SEP COMMENT SEP AMOUNT
 	{
 		struct expense *e;
-		printf("Annual expense: %d rupees for %s in month of %s.\n",
-				$7, $5, $3);
 		e = malloc(sizeof(struct expense));
 		if (!e) {
 			/* TODO */
@@ -182,18 +179,6 @@ main (int argc, char **argv)
 	 */
 	yyparse();
 
-#define DEBUG
-#ifdef DEBUG
-	ch = 0;
-	STAILQ_FOREACH(e, &headp, next) {
-		printf("%d\n", ch);
-		printf("e->exptype = %s\n", expensename(e->exptype));
-		printf("e->amount = %d\n", e->amount);
-		printf("e->comment = [%s]\n\n", e->comment);
-		ch++;
-	}
-#endif
-
 	/*
 	 * FIXME: Step 2: Validate input
 	 */
@@ -217,14 +202,14 @@ main (int argc, char **argv)
 	/*
 	 * Step 5: Display results
 	 */
-	if (display_finance(expenselist, months, verbose) < 0) {
+	if (display_finances(expenselist, months, verbose) < 0) {
 		return 1;
 	}
 
 	/*
 	 * Step 6: Cleanup
 	 */
-	cleanup_expenselist(expenselist);
+	cleanup_expenselist(&headp, expenselist);
 
 	if (argc) {
 		fclose(yyin);
