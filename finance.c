@@ -18,8 +18,8 @@
 /*
  * Global variables
  */
-uint32_t initialcapital;
-uint32_t intendedsavings;
+uint32_t initialcapital = 0;
+uint32_t intendedsavings = 0;
 
 int
 get_curr_month(int *m, int *y)

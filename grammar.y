@@ -53,10 +53,20 @@ initialcapitalorsavings: CHAR SEP AMOUNT
 	{
 		switch ($1) {
 		case 'I':
-			initialcapital = $3;
+			/*
+			 * If we have got the initial capital via
+			 * options, then use that, and ignore the one
+			 * supplied in the input.
+			 */
+			initialcapital = (initialcapital)?:$3;
 			break;
 		case 'S':
-			intendedsavings = $3;
+			/*
+			 * If we have got the intended savings via
+			 * options, then use that, and ignore the one
+			 * supplied in the input.
+			 */
+			intendedsavings = (intendedsavings)?:$3;
 			break;
 		}
 	}
@@ -128,13 +138,15 @@ usage (void) {
 int
 main (int argc, char **argv)
 {
-	int verbose = 0;
+	int verbose, months, display;
 	int ch, cmon, cyear;
 	char *ptr;
-
-	int months = DEFAULT_TIMELINE;
 	struct monthlyexp *expenselist;
+
 	STAILQ_HEAD(expense_hdr, expense);
+	verbose = 0;
+	months = DEFAULT_TIMELINE;
+	display = CONSOLE;
 
 	/*
 	 * Find the program name to be used for error messages and usage
@@ -145,13 +157,22 @@ main (int argc, char **argv)
 	/*
 	 * getopt magic
 	 */
-	while ((ch = getopt(argc, argv, "hvt:")) != -1) {
+	while ((ch = getopt(argc, argv, "hvd:t:i:s:")) != -1) {
 		switch (ch) {
 			case 'v':
 				verbose = 1;
 				break;
+			case 'd':
+				display = CONSOLE;
+				break;
 			case 't':
 				months = atoi(optarg);
+				break;
+			case 'i':
+				initialcapital = atoi(optarg);
+				break;
+			case 's':
+				intendedsavings = atoi(optarg);
 				break;
 			case 'h':
 			default:
