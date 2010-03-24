@@ -194,6 +194,15 @@ struct expense {
 };
 STAILQ_HEAD(expense_hdr, expense);
 
+/*
+ * Display options
+ */
+enum displaytype {
+	CONSOLE,
+	GNUPLOT,
+	X11,
+};
+
 int get_curr_month(int *, int *);
 struct monthlyexp *init_expenselist(int, int, int);
 int calculate_expenses(struct monthlyexp *, struct expense_hdr *, int, int);
