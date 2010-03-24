@@ -52,10 +52,9 @@ display_finances(struct monthlyexp *exp, int months, int verbose)
 	 * We'll have prettier display later.
 	 */
 	for (m = 0; m < months; m++) {
-		printf("%s %d\n", monthname(exp[m].month), exp[m].year);
-		printf("Expenses: %d\n", exp[m].expenses);
-		printf("Savings: %d\n", exp[m].savings);
-		printf("\n");
+		printf("%s %d (E: %d) (S: %d)\n",
+				monthname(exp[m].month), exp[m].year,
+				exp[m].expenses, exp[m].savings);
 	}
 
 	return 0;
@@ -92,10 +91,12 @@ calculate_expenses(struct monthlyexp * exp, struct expense_hdr *headp,
 {
 	int i, rm;
 	struct expense *e;
+	uint32_t savingssofar;
 	
 	/*
 	 * For each month, go over the expense list, and add to the expenses
 	 */
+	savingssofar = initialcapital;
 	for (i = 0; i < months; i++) {
 		rm = ((cur_mon + i) % MONTHS_PER_YEAR) + 1;
 		STAILQ_FOREACH(e, headp, next) {
@@ -113,6 +114,8 @@ calculate_expenses(struct monthlyexp * exp, struct expense_hdr *headp,
 					break;
 			}
 		}
+		savingssofar += intendedsavings;
+		exp[i].savings = savingssofar;
 	}
 	return 0;
 }
