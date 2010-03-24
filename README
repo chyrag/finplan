@@ -21,10 +21,10 @@ Eg: Input is this:
 > Annual LIC premium: 29500 + 511
 > Annual Birla Insurance premium: 51000
 > 
-> Upcoming expenses (given a time period):
-> Furniture (3 months): 20000
-> Soha (1 year): 100000
-> Advance Tax (1 month): 10000
+> Upcoming expenses (at a given time in future: eg: Feb 2011):
+> Furniture (Feb 2011): 20000
+> Soha (Dec 2010): 100000
+> Advance Tax (May 2010): 10000
 > 
 > Initial Savings: 50000
 > Intended Savings per month: 20000
