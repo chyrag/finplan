@@ -21,6 +21,7 @@ static struct expense_hdr headp;
 extern int yylex(void);
 extern int yyparse(void);
 extern FILE *yyin;
+extern char *yytext;
 %}
 
 %union {
@@ -33,7 +34,7 @@ extern FILE *yyin;
 %token <string> COMMENT
 %token <string> MONTH
 %token <c>      CHAR
-%token <number> AMOUNT
+%token <number> NUMBER
 
 %%
 
@@ -45,11 +46,12 @@ line:	emptyline
 	| initialcapitalorsavings
 	| monthlyexpense
 	| annualexpense
+	| onetimeexpense
 	;
 
 emptyline: NEWLINE
 
-initialcapitalorsavings: CHAR SEP AMOUNT
+initialcapitalorsavings: CHAR SEP NUMBER
 	{
 		switch ($1) {
 		case 'I':
@@ -72,7 +74,7 @@ initialcapitalorsavings: CHAR SEP AMOUNT
 	}
 	;
 
-monthlyexpense: CHAR SEP COMMENT SEP AMOUNT
+monthlyexpense: CHAR SEP COMMENT SEP NUMBER
 	{
 		struct expense *e;
 		e = malloc(sizeof(struct expense));
@@ -98,7 +100,7 @@ monthlyexpense: CHAR SEP COMMENT SEP AMOUNT
 	}
 	;
 
-annualexpense: CHAR SEP MONTH SEP COMMENT SEP AMOUNT
+annualexpense: CHAR SEP MONTH SEP COMMENT SEP NUMBER
 	{
 		struct expense *e;
 		e = malloc(sizeof(struct expense));
@@ -116,12 +118,31 @@ annualexpense: CHAR SEP MONTH SEP COMMENT SEP AMOUNT
 	}
 	;
 
+onetimeexpense: CHAR SEP MONTH SEP NUMBER SEP COMMENT SEP NUMBER
+	{
+		struct expense *e;
+		e = malloc(sizeof(struct expense));
+		if (!e) {
+			/* TODO */
+			return -1;
+		}
+		e->exptype = ONETIME;
+		e->opts.oeo.month = monthnumber($3);
+		e->opts.oeo.year = $5;
+		e->comment = trim($7);
+		trim(e->comment);
+		e->amount = $9;
+
+		STAILQ_INSERT_TAIL(&headp, e, next);
+	}
+	;
+
 %%
 
 void
 yyerror (const char * errstr)
 {
-	fprintf(stderr, "%s\n", errstr);
+	fprintf(stderr, "%s at %s\n", errstr, yytext);
 }
 
 int
@@ -222,7 +243,7 @@ main (int argc, char **argv)
 	/*
 	 * Step 4: Main expense processing
 	 */
-	if (calculate_expenses(expenselist, &headp, months, cmon) < 0) {
+	if (calculate_expenses(expenselist, &headp, months, cmon, cyear) < 0) {
 		errx(1, "error processing expenses");
 	}
 

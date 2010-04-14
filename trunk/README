@@ -21,7 +21,7 @@ Eg: Input is this:
 > Annual LIC premium: 29500 + 511
 > Annual Birla Insurance premium: 51000
 > 
-> Upcoming expenses (at a given time in future: eg: Feb 2011):
+> One time expenses (at a given time in future: eg: Feb 2011):
 > Furniture (Feb 2011): 20000
 > Soha (Dec 2010): 100000
 > Advance Tax (May 2010): 10000
@@ -50,17 +50,15 @@ Format is: C:opts:Comment:Amount
 
 C = character 'M' for mandatory expense (no adjustment possible)
               'B' for budgetary expense (sloppa adjustment can be made)
-              'A' for annual
-	      'U' for upcoming
+              'A' for annual expense
+	      'O' for one time expense
 	      'I' for initial savings
 	      'S' for monthly intended savings
 	      'G' for goals
 
 opts = options depending on the expense periodicity. The options are:
-    'A' Option for annual: month name in short (Jan, Feb, Apr etc)
-    'U' Option for upcoming: time frame in to buy/spend/purchase:
-	The timeframe could be 1M, 2M, 3Y to denote 1 month, 2 months, 3 years
-	etc. Less than 1 month timeframe is bad planning.
+    'A' Option for annual expense: month name in short (Jan, Feb, Apr etc)
+    'O' Option for one time expense: month, year (Sep 2010)
     No options for mandatory or budgetary expenses, initial savings, and
     monthly savings as of now
 
@@ -74,8 +72,8 @@ M:Telecom Bill: 3000
 B:Soumia: 20000
 A:Jan:LIC Premium for policy no. XXXX: 29500
 A:Oct:LIC Premium for policy no. YYYY: 511
-U:1M:Advance Tax: 10000
-U:1Y:Soha: 100000
+O:Jul 2010:Advance Tax: 10000
+O:Mar 2011:Soha: 100000
 G:Jan 2010: 200000
 
 Output:
