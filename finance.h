@@ -100,9 +100,9 @@ monthnumber (char *monthname)
 {
 	/*
 	 * Keeping it simple and stupid right now. Later on,
-	 * if the function is being called, then, we can
-	 * hash on the monthname and keep an array of
-	 * hashes.
+	 * if the function is being called several times,
+	 * then, we can hash on the monthname and keep an
+	 * array of hashes.
 	 */
 #define CMP(m)  if (!strncmp(uppercase(monthname), #m, 3)) { \
 			return m; \
@@ -142,6 +142,7 @@ enum expensetype {
 	MONTHLY,
 	ANNUAL,
 	BUDGETARY,
+	ONETIME,
 }; 
 
 static const char *expensenames[] = {
@@ -149,6 +150,7 @@ static const char *expensenames[] = {
 	"Monthly",
 	"Annual",
 	"Budgetary",
+	"One time",
 };
 
 static inline const char *
@@ -164,6 +166,14 @@ expensename (enum expensetype exptype) {
  */
 struct annualexpopt {
 	enum month month; /* which month is this expense due? */
+};
+
+/*
+ * Options for one time expenses
+ */
+struct onetimeexpopt {
+	enum month month; /* month, ... */
+	uint16_t year;    /* ... year when this expense due? */
 };
 
 #if 0
@@ -183,6 +193,7 @@ struct expense {
 	enum expensetype exptype;
 	union {
 		struct annualexpopt aeo;
+		struct onetimeexpopt oeo;
 #if 0
 		struct goal g;
 #endif
@@ -205,7 +216,7 @@ enum displaytype {
 
 int get_curr_month(int *, int *);
 struct monthlyexp *init_expenselist(int, int, int);
-int calculate_expenses(struct monthlyexp *, struct expense_hdr *, int, int);
+int calculate_expenses(struct monthlyexp *, struct expense_hdr *, int, int, int);
 int display_finances(struct monthlyexp *, int, int);
 void cleanup_expenselist(struct expense_hdr *, struct monthlyexp *);
 

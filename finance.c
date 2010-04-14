@@ -52,9 +52,15 @@ display_finances(struct monthlyexp *exp, int months, int verbose)
 	 * We'll have prettier display later.
 	 */
 	for (m = 0; m < months; m++) {
-		printf("%s %d (E: %d) (S: %d)\n",
-				monthname(exp[m].month), exp[m].year,
-				exp[m].expenses, exp[m].savings);
+		if (verbose) {
+			printf("%s %d (E: %d) (S: %d)\n",
+					monthname(exp[m].month), exp[m].year,
+					exp[m].expenses, exp[m].savings);
+		} else {
+			printf("%s %d %d\n",
+					monthname(exp[m].month), exp[m].year,
+					exp[m].expenses);
+		}
 	}
 
 	return 0;
@@ -73,7 +79,7 @@ init_expenselist(int months, int cur_mon, int cur_year)
 			 * Initialize figures for next month onwards..
 			 */
 			exp[m].month = ((cur_mon + m) % MONTHS_PER_YEAR)+1;
-			if (exp[m].month == 0) {
+			if (exp[m].month == JAN) {
 				y++;
 			}
 			exp[m].year = cur_year + y;
@@ -87,9 +93,9 @@ init_expenselist(int months, int cur_mon, int cur_year)
 
 int
 calculate_expenses(struct monthlyexp * exp, struct expense_hdr *headp,
-		int months, int cur_mon)
+		int months, int cur_mon, int cur_year)
 {
-	int i, rm;
+	int i, rm, ry;
 	struct expense *e;
 	uint32_t savingssofar;
 	
@@ -97,8 +103,12 @@ calculate_expenses(struct monthlyexp * exp, struct expense_hdr *headp,
 	 * For each month, go over the expense list, and add to the expenses
 	 */
 	savingssofar = initialcapital;
+	ry = cur_year;
 	for (i = 0; i < months; i++) {
 		rm = ((cur_mon + i) % MONTHS_PER_YEAR) + 1;
+		if (rm == JAN) {
+			ry++;
+		}
 		STAILQ_FOREACH(e, headp, next) {
 			switch (e->exptype) {
 				case BUDGETARY:
@@ -107,6 +117,12 @@ calculate_expenses(struct monthlyexp * exp, struct expense_hdr *headp,
 					break;
 				case ANNUAL:
 					if (e->opts.aeo.month == rm) {
+						exp[i].expenses += e->amount;
+					}
+					break;
+				case ONETIME:
+					if ((e->opts.oeo.month == rm) &&
+							(e->opts.oeo.year == ry)) {
 						exp[i].expenses += e->amount;
 					}
 					break;

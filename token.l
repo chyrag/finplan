@@ -18,8 +18,9 @@ string	[^:\n]
 %%
 
 #[^\n]*		/* ignore comment */
+[ \t]		;
 {month}		{ yylval.string = strdup(yytext); return MONTH;   }
-{digit}+	{ yylval.number = atoi(yytext);   return AMOUNT;  }
+{digit}+	{ yylval.number = atoi(yytext);   return NUMBER;  }
 {char}		{ yylval.c = yytext[0]; 	  return CHAR;    }
 {string}+	{ yylval.string = strdup(yytext); return COMMENT; }
 \n		{ return NEWLINE; }
