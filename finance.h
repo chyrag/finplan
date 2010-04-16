@@ -13,6 +13,7 @@
 
 extern uint32_t initialcapital;
 extern uint32_t intendedsavings;
+extern uint32_t monthlyincome;
 
 enum month {
 	INVALID,
@@ -131,7 +132,7 @@ struct monthlyexp {
 	enum month	month;		/* jan = 1, feb = 2, ... */
 	uint32_t	year;
 	uint32_t	expenses;
-	uint32_t	savings;
+	uint32_t	funds;
 };
 
 /*
