@@ -44,7 +44,7 @@ lines: /* empty */
 
 line:	emptyline
 	| initialcapitalorsavings
-	| monthlyexpense
+	| monthlyexpenseorincome
 	| annualexpense
 	| onetimeexpense
 	;
@@ -74,7 +74,7 @@ initialcapitalorsavings: CHAR SEP NUMBER
 	}
 	;
 
-monthlyexpense: CHAR SEP COMMENT SEP NUMBER
+monthlyexpenseorincome: CHAR SEP COMMENT SEP NUMBER
 	{
 		struct expense *e;
 		e = malloc(sizeof(struct expense));
@@ -84,17 +84,32 @@ monthlyexpense: CHAR SEP COMMENT SEP NUMBER
 		}
 		switch ($1) {
 		case 'B':
+			/*
+			 * Income, salary...
+			 */
 			e->exptype = BUDGETARY;
+			e->comment = trim($3);
+			e->amount = $5;
 			break;
 		case 'M':
+			/*
+			 * Income, salary...
+			 */
 			e->exptype = MONTHLY;
+			e->comment = trim($3);
+			e->amount = $5;
+			break;
+		case 'C':
+			/*
+			 * Income, salary...
+			 * (need to maintain a link list to keep track of incomes)
+			 */
+			monthlyincome += (monthlyincome)?:$5;
 			break;
 		default:
 			return -1;
 			break;
 		}
-		e->comment = trim($3);
-		e->amount = $5;
 
 		STAILQ_INSERT_TAIL(&headp, e, next);
 	}

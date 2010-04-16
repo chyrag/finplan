@@ -8,6 +8,7 @@ Functional specs:
 ------------------------------------------------------------------------
 Eg: Input is this:
 
+> Monthly income: 20000
 > Monthly rent: 15000
 > Monthly telecom bill: 3000
 > Monthly electricity bill: 500
@@ -48,13 +49,14 @@ Eg: input file would look like:
 
 Format is: C:opts:Comment:Amount
 
-C = character 'M' for mandatory expense (no adjustment possible)
-              'B' for budgetary expense (sloppa adjustment can be made)
-              'A' for annual expense
-	      'O' for one time expense
-	      'I' for initial savings
-	      'S' for monthly intended savings
-	      'G' for goals
+C = character 'M' for Mandatory expense (no adjustment possible)
+              'B' for Budgetary expense (sloppa adjustment can be made)
+              'A' for Annual expense
+	      'O' for One time expense
+	      'C' for monthly inCome
+	      'I' for Initial savings
+	      'S' for monthly intended Savings
+	      'G' for Goals
 
 opts = options depending on the expense periodicity. The options are:
     'A' Option for annual expense: month name in short (Jan, Feb, Apr etc)
@@ -67,6 +69,7 @@ Amount: the amount in rupees
 
 I:50000
 S:20000
+C:Juniper Salary:20000
 M:House Rent: 15000
 M:Telecom Bill: 3000
 B:Soumia: 20000
