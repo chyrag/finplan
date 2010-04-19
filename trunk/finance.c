@@ -51,21 +51,15 @@ display_finances(struct monthlyexp *exp, int months, int verbose)
 	 * We'll have prettier display later.
 	 */
 	for (m = 0; m < months; m++) {
-		if (verbose) {
-			/*
-			 * E: Expenses
-			 * S: Savings
-			 * AF: Available funds
-			 */
-			printf("%s %d (E: %d) (S: %d) (AF: %d)\n",
-			       monthname(exp[m].month), exp[m].year,
-			       exp[m].expenses, exp[m].savings,
-			       exp[m].funds);
-		} else {
-			printf("%s %d %d\n",
-			       monthname(exp[m].month), exp[m].year,
-			       exp[m].expenses);
-		}
+		/*
+		 * E: Expenses
+		 * S: Savings
+		 * AF: Available funds
+		 */
+		printf("%s %d | E: %8d | S: %8d | AF: %8d\n",
+				monthname(exp[m].month), exp[m].year,
+				exp[m].expenses, exp[m].savings,
+				exp[m].funds);
 	}
 
 	return 0;
