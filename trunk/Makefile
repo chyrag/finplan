@@ -8,8 +8,8 @@ CFLAGS = -Wall -g
 
 NO_MAN = yes
 
-test:
-	$(PROG) -v -i 75000 < input
+test: $(PROG)
+	$(PROG) -v -i 75000 < finplan.in
 
 cscope:
 	find . -name "*.[chyl]" > cscope.files

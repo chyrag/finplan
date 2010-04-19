@@ -171,6 +171,18 @@ usage (void) {
 	printf("Usage: %s [-h] [-v] [-t months] file ...\n", progname);
 }
 
+static int
+setdisplay (char *display) {
+	if (strcmp(display, "console") == 0) {
+		return CONSOLE;
+	}
+	if (strcmp(display, "gnuplot") == 0) {
+		return GNUPLOT;
+	}
+
+	return -1;
+}
+
 int
 main (int argc, char **argv)
 {
@@ -199,7 +211,10 @@ main (int argc, char **argv)
 				verbose = 1;
 				break;
 			case 'd':
-				display = CONSOLE;
+				display = setdisplay(optarg);
+				if (display < 0) {
+					errx(1, "error: display type not implemented");
+				}
 				break;
 			case 't':
 				months = atoi(optarg);
@@ -258,14 +273,14 @@ main (int argc, char **argv)
 	/*
 	 * Step 4: Main expense processing
 	 */
-	if (calculate_expenses(expenselist, &headp, months, cmon, cyear) < 0) {
+	if (calculate_expenses(display, expenselist, &headp, months, cmon, cyear) < 0) {
 		errx(1, "error processing expenses");
 	}
 
 	/*
 	 * Step 5: Display results
 	 */
-	if (display_finances(expenselist, months, verbose) < 0) {
+	if (display_finances(display, expenselist, months, verbose) < 0) {
 		return 1;
 	}
 
