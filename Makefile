@@ -9,6 +9,10 @@ CFLAGS = -Wall -g
 NO_MAN = yes
 
 test:
-	$(PROG) -v -t 24 < input
+	$(PROG) -v -i 75000 < input
+
+cscope:
+	find . -name "*.[chyl]" > cscope.files
+	cscope -buq -F cscope.files
 
 .include <bsd.prog.mk>

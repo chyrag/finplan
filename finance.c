@@ -16,12 +16,11 @@
 #include "finance.h"
 
 /*
- * Global variables
+ * Global variables set via expense input file
  */
 uint32_t	initialcapital = 0;
 uint32_t	intendedsavings = 0;
 uint32_t	monthlyincome = 0;
-uint32_t	funds = 0;
 
 int
 get_curr_month(int *m, int *y)
@@ -53,9 +52,15 @@ display_finances(struct monthlyexp *exp, int months, int verbose)
 	 */
 	for (m = 0; m < months; m++) {
 		if (verbose) {
-			printf("%s %d (E: %d) (S: %d)\n",
+			/*
+			 * E: Expenses
+			 * S: Savings
+			 * AF: Available funds
+			 */
+			printf("%s %d (E: %d) (S: %d) (AF: %d)\n",
 			       monthname(exp[m].month), exp[m].year,
-			       exp[m].expenses, exp[m].funds);
+			       exp[m].expenses, exp[m].savings,
+			       exp[m].funds);
 		} else {
 			printf("%s %d %d\n",
 			       monthname(exp[m].month), exp[m].year,
@@ -85,22 +90,59 @@ init_expenselist(int months, int cur_mon, int cur_year)
 			exp[m].year = cur_year + y;
 			exp[m].expenses = 0;
 			exp[m].funds = 0;
+			exp[m].savings = 0;
 		}
 	}
 	return exp;
+}
+
+static int
+triage_expense (uint32_t funds, uint32_t savings, struct monthlyexp *exp)
+{
+	/*
+	 * We can meet the expenses without stretching.
+	 */
+	if (exp->expenses + intendedsavings < funds) {
+		return EOK;
+	}
+
+	/*
+	 * If the expenses exceed the funds...
+	 * ... then, lets check if we can forgo the savings for this
+	 * month, and manage.
+	 */
+	if (exp->expenses < funds) {
+		return ENOSAVINGS;
+	}
+
+	/*
+	 * If the expenses exceed the funds, but we can borrow from
+	 * savings, and save the world!
+	 */
+	if (exp->expenses < funds + savings) {
+		return EUSESAVINGS;
+	}
+
+	/*
+	 * If none of the above matches, then expenses should be more
+	 * than we can manage using available funds + savings.
+	 */
+	return ENOHOPE;
 }
 
 int
 calculate_expenses(struct monthlyexp *exp, struct expense_hdr *headp,
 		   int months, int cur_mon, int cur_year)
 {
-	int		i         , rm, ry;
+	int		i, rm, ry;
+	uint32_t	funds, savings, tmp;
 	struct expense *e;
 
 	/*
 	 * Funds that we have at disposal
 	 */
 	funds = initialcapital;
+	savings = 0;
 
 	/*
 	 * For each month, go over the expense list, and add to the expenses
@@ -111,6 +153,7 @@ calculate_expenses(struct monthlyexp *exp, struct expense_hdr *headp,
 		if (rm == JAN) {
 			ry++;
 		}
+
 		/*
 		 * Add the salary to the funds
 		 */
@@ -142,17 +185,54 @@ calculate_expenses(struct monthlyexp *exp, struct expense_hdr *headp,
 		}
 
 		/*
+		 * We have calculated the expenses for this month.
 		 * Check if we have enough funds to cover this month's
-		 * expenses
+		 * expenses plus the intended savings
 		 */
-		if (funds < exp[i].expenses) {
+
+		switch (triage_expense(funds, savings, &exp[i])) {
+		case EOK:
+			/*
+			 * Add monthly savings as an expense
+			 */
+			exp[i].expenses += intendedsavings;
+			savings         += intendedsavings;
+			exp[i].savings   = savings;
+			break;
+
+		case ENOSAVINGS:
+			/*
+			 * Sadly, we can't afford to save the intended
+			 * amount this month.
+			 */
+			warnx(NOSAVINGS_ERR_MSG, intendedsavings,
+					monthname(rm), ry);
+			exp[i].savings 	= savings;
+			break;
+
+		case EUSESAVINGS:
+			/*
+			 * We would need to use the savings to manage
+			 * expenses this month.
+			 */
+			tmp = exp[i].expenses - funds;
+			warnx(USESAVINGS_ERR_MSG, tmp,
+					monthname(rm), ry);
+			savings 	-= exp[i].expenses - funds;
+			exp[i].savings 	= savings;
+			break;
+
+		case ENOHOPE:
+			warnx(NOHOPE_ERR_MSG REQ_INFO_MSG,
+					monthname(rm), ry,
+					exp[i].expenses, funds,
+					savings);
 			display_finances(exp, i + 1, 1);
-			err(1, "expenses for %s %d exceeds the funds"
-			    " (need %d; have %d)\n",
-			    monthname(rm), ry,
-			    exp[i].expenses, funds);
 			return -1;
+
 		}
+
+
 		/*
 		 * Deduct the expenses of the month from the savings
 		 */

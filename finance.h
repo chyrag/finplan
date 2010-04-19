@@ -1,6 +1,6 @@
 /*
  * finance.h: declarations for finance functions
- *
+ * 
  * Chirag Kantharia <chirag@kantharia.in>
  * Jan 2010
  */
@@ -11,9 +11,40 @@
 #define DEFAULT_TIMELINE	12	/* months */
 #define MONTHS_PER_YEAR		12
 
-extern uint32_t initialcapital;
-extern uint32_t intendedsavings;
-extern uint32_t monthlyincome;
+#define REQ_INFO_MSG		"(need %d, have %d, savings %d)"
+#define NOSAVINGS_ERR_MSG	"warning: not enough funds to save %d for %s %d"
+#define USESAVINGS_ERR_MSG	"warning: would need to borrow %d from savings for %s %d"
+#define NOHOPE_ERR_MSG		"error: expenses for %s %d exceeds funds\n"
+
+
+extern uint32_t	initialcapital;
+extern uint32_t	intendedsavings;
+extern uint32_t	monthlyincome;
+
+/*
+ * Possible outcomes of triaging expenses
+ */
+enum {
+	EOK = 0,
+
+	/*
+	 * Expenses are high, but we can borrow from savings and
+	 * survive.
+	 */
+	EUSESAVINGS,
+
+	/*
+	 * Expenses are high, but we can borrow from savings and
+	 * survive.
+	 */
+	ENOSAVINGS,
+
+	/*
+	 * Expenses are high and we cant survive even if we borrow
+	 * from savings.
+	 */
+	ENOHOPE,
+};
 
 enum month {
 	INVALID,
@@ -48,20 +79,19 @@ static const char *monthnames[] = {
 };
 
 static inline const char *
-monthname (int n)
+monthname(int n)
 {
 	if (n < JAN || n > DEC) {
 		return NULL;
 	}
-
 	return monthnames[n];
 }
 
-static inline char*
-uppercase (char *name)
+static inline char *
+uppercase(char *name)
 {
-	int i, len;
-	
+	int		i         , len;
+
 	len = strlen(name);
 	for (i = 0; i < len; i++) {
 		if (name[i] >= 'a' && name[i] <= 'z') {
@@ -72,24 +102,22 @@ uppercase (char *name)
 	return name;
 }
 
-static inline char*
-trim (char *string)
+static inline char *
+trim(char *string)
 {
-	int i, j, len;
-	char *p;
+	int		i         , j, len;
+	char           *p;
 
 	if ((len = strlen(string)) == 0) {
 		return string;
 	}
-
-	for (i = 0;       i < len && string[i] == ' '; i++);
-	for (j = len - 1; j > 0   && string[j] == ' '; j--);
+	for (i = 0; i < len && string[i] == ' '; i++);
+	for (j = len - 1; j > 0 && string[j] == ' '; j--);
 
 	len = j - i + 1;
 	if (!(p = malloc(len + 1))) {
 		return p;
 	}
-
 	strncpy(p, &string[i], len);
 	p[len] = '\0';
 
@@ -97,13 +125,12 @@ trim (char *string)
 }
 
 static inline enum month
-monthnumber (char *monthname)
+monthnumber(char *monthname)
 {
 	/*
-	 * Keeping it simple and stupid right now. Later on,
-	 * if the function is being called several times,
-	 * then, we can hash on the monthname and keep an
-	 * array of hashes.
+	 * Keeping it simple and stupid right now. Later on, if the function
+	 * is being called several times, then, we can hash on the monthname
+	 * and keep an array of hashes.
 	 */
 #define CMP(m)  if (!strncmp(uppercase(monthname), #m, 3)) { \
 			return m; \
@@ -129,10 +156,11 @@ monthnumber (char *monthname)
  * Monthly expense
  */
 struct monthlyexp {
-	enum month	month;		/* jan = 1, feb = 2, ... */
+	enum month	month;	/* jan = 1, feb = 2, ... */
 	uint32_t	year;
 	uint32_t	expenses;
 	uint32_t	funds;
+	uint32_t	savings;
 };
 
 /*
@@ -144,7 +172,7 @@ enum expensetype {
 	ANNUAL,
 	BUDGETARY,
 	ONETIME,
-}; 
+};
 
 static const char *expensenames[] = {
 	"Invalid",
@@ -155,7 +183,8 @@ static const char *expensenames[] = {
 };
 
 static inline const char *
-expensename (enum expensetype exptype) {
+expensename(enum expensetype exptype)
+{
 	if (exptype < 0 || exptype > BUDGETARY) {
 		exptype = 0;
 	}
@@ -166,15 +195,15 @@ expensename (enum expensetype exptype) {
  * Options for annual expenses
  */
 struct annualexpopt {
-	enum month month; /* which month is this expense due? */
+	enum month	month;	/* which month is this expense due? */
 };
 
 /*
  * Options for one time expenses
  */
 struct onetimeexpopt {
-	enum month month; /* month, ... */
-	uint16_t year;    /* ... year when this expense due? */
+	enum month	month;	/* month, ... */
+	uint16_t	year;	/* ... year when this expense due? */
 };
 
 #if 0
@@ -182,8 +211,8 @@ struct onetimeexpopt {
  * Options for goals
  */
 struct goal {
-	enum month month; /* which month/year is this goal due? */
-	int year;
+	enum month	month;	/* which month/year is this goal due? */
+	int		year;
 };
 #endif
 
@@ -196,13 +225,13 @@ struct expense {
 		struct annualexpopt aeo;
 		struct onetimeexpopt oeo;
 #if 0
-		struct goal g;
+		struct goal	g;
 #endif
-	} opts;
-	char *comment;
-	uint32_t amount;
+	}		opts;
+	char           *comment;
+	uint32_t	amount;
 
-	STAILQ_ENTRY(expense) next;
+			STAILQ_ENTRY  (expense) next;
 };
 STAILQ_HEAD(expense_hdr, expense);
 
@@ -215,10 +244,10 @@ enum displaytype {
 	X11,
 };
 
-int get_curr_month(int *, int *);
+int		get_curr_month(int *, int *);
 struct monthlyexp *init_expenselist(int, int, int);
-int calculate_expenses(struct monthlyexp *, struct expense_hdr *, int, int, int);
-int display_finances(struct monthlyexp *, int, int);
-void cleanup_expenselist(struct expense_hdr *, struct monthlyexp *);
+int		calculate_expenses(struct monthlyexp *, struct expense_hdr *, int, int, int);
+int		display_finances(struct monthlyexp *, int, int);
+void		cleanup_expenselist(struct expense_hdr *, struct monthlyexp *);
 
-#endif /* __FINANCE_H_ */
+#endif				/* __FINANCE_H_ */
