@@ -239,15 +239,15 @@ STAILQ_HEAD(expense_hdr, expense);
  * Display options
  */
 enum displaytype {
-	CONSOLE,
+	CONSOLE = 1,
 	GNUPLOT,
 	X11,
 };
 
 int		get_curr_month(int *, int *);
 struct monthlyexp *init_expenselist(int, int, int);
-int		calculate_expenses(struct monthlyexp *, struct expense_hdr *, int, int, int);
-int		display_finances(struct monthlyexp *, int, int);
+int		calculate_expenses(int, struct monthlyexp *, struct expense_hdr *, int, int, int);
+int		display_finances(int, struct monthlyexp *, int, int);
 void		cleanup_expenselist(struct expense_hdr *, struct monthlyexp *);
 
 #endif				/* __FINANCE_H_ */

@@ -43,23 +43,44 @@ get_curr_month(int *m, int *y)
 }
 
 int
-display_finances(struct monthlyexp *exp, int months, int verbose)
+display_finances(int displaytype, struct monthlyexp *exp, int months, int verbose)
 {
 	int		m;
+	FILE		*fp;
 
-	/*
-	 * We'll have prettier display later.
-	 */
-	for (m = 0; m < months; m++) {
+	switch (displaytype) {
+	case CONSOLE:
+		for (m = 0; m < months; m++) {
+			/*
+			 * E: Expenses
+			 * S: Savings
+			 * AF: Available funds
+			 */
+			printf("%s %d | E: %8d | S: %8d | AF: %8d\n",
+					monthname(exp[m].month), exp[m].year,
+					exp[m].expenses, exp[m].savings,
+					exp[m].funds);
+		}
+		break;
+	case GNUPLOT:
 		/*
-		 * E: Expenses
-		 * S: Savings
-		 * AF: Available funds
+		 * FIXME: Use a temp file
+		 * FIXME: Use seperate functions
 		 */
-		printf("%s %d | E: %8d | S: %8d | AF: %8d\n",
-				monthname(exp[m].month), exp[m].year,
-				exp[m].expenses, exp[m].savings,
-				exp[m].funds);
+		fp = fopen("gpdata", "w");
+		if (!fp) {
+			return -1;
+		}
+		for (m = 0; m < months; m++) {
+			fprintf(fp, "\"%s %d\" %d %d %d\n", monthname(exp[m].month),
+					exp[m].year, exp[m].expenses, exp[m].savings,
+					exp[m].funds);
+		}
+		fclose(fp);
+		break;
+	default:
+		printf("Display type not yet implemented\n");
+		break;
 	}
 
 	return 0;
@@ -125,11 +146,11 @@ triage_expense (uint32_t funds, uint32_t savings, struct monthlyexp *exp)
 }
 
 int
-calculate_expenses(struct monthlyexp *exp, struct expense_hdr *headp,
+calculate_expenses(int display, struct monthlyexp *exp, struct expense_hdr *headp,
 		   int months, int cur_mon, int cur_year)
 {
 	int		i, rm, ry;
-	uint32_t	funds, savings, tmp;
+	uint32_t	funds, savings, bamt;
 	struct expense *e;
 
 	/*
@@ -191,7 +212,9 @@ calculate_expenses(struct monthlyexp *exp, struct expense_hdr *headp,
 			 */
 			exp[i].expenses += intendedsavings;
 			savings         += intendedsavings;
-			exp[i].savings   = savings;
+			exp[i].savings	= savings;
+			funds 		-= exp[i].expenses;
+			exp[i].funds 	= funds;
 			break;
 
 		case ENOSAVINGS:
@@ -202,6 +225,8 @@ calculate_expenses(struct monthlyexp *exp, struct expense_hdr *headp,
 			warnx(NOSAVINGS_ERR_MSG, intendedsavings,
 					monthname(rm), ry);
 			exp[i].savings 	= savings;
+			funds 		-= exp[i].expenses;
+			exp[i].funds 	= funds;
 			break;
 
 		case EUSESAVINGS:
@@ -209,11 +234,13 @@ calculate_expenses(struct monthlyexp *exp, struct expense_hdr *headp,
 			 * We would need to use the savings to manage
 			 * expenses this month.
 			 */
-			tmp = exp[i].expenses - funds;
-			warnx(USESAVINGS_ERR_MSG, tmp,
+			bamt = exp[i].expenses - funds;
+			warnx(USESAVINGS_ERR_MSG, bamt,
 					monthname(rm), ry);
-			savings 	-= exp[i].expenses - funds;
+			savings 	-= bamt;
+			funds		= 0;
 			exp[i].savings 	= savings;
+			exp[i].funds 	= funds;
 			break;
 
 		case ENOHOPE:
@@ -221,23 +248,10 @@ calculate_expenses(struct monthlyexp *exp, struct expense_hdr *headp,
 					monthname(rm), ry,
 					exp[i].expenses, funds,
 					savings);
-			display_finances(exp, i + 1, 1);
+			display_finances(display, exp, i + 1, 1);
 			return -1;
 
 		}
-
-
-		/*
-		 * Deduct the expenses of the month from the savings
-		 */
-		funds -= exp[i].expenses;
-
-		/*
-		 * We add the intended monthly savings to the overall
-		 * savings, but also deduct that from the income, and so...
-		 * they cancel each other.
-		 */
-		exp[i].funds = funds;
 	}
 	return 0;
 }
