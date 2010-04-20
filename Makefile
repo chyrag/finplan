@@ -7,6 +7,7 @@ SRCS=	\
 CFLAGS = -Wall -g
 
 NO_MAN = yes
+CLEANFILES = gpdata
 
 test: $(PROG)
 	$(PROG) -v -i 75000 < finplan.in

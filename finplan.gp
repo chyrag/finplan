@@ -1,6 +1,6 @@
-set terminal jpeg medium
-set output "histo.jpeg"
-set boxwidth 0.75 absolute
+#!/usr/local/bin/gnuplot
+#set terminal jpeg medium
+#set output "histo.jpeg"
 set style fill solid 1.00 border -1
 set style data histogram
 set style histogram cluster gap 1
