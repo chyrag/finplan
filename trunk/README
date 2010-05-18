@@ -3,6 +3,16 @@ Chirag Kantharia <chirag@kantharia.in>
 Fri Jan 15 22:51:08 IST 2010
 Version 0.1
 
+Idea and Motivation
+------------------------------------------------------------------------
+
+While planning an expensive purchase, or a holiday/vacation, or taking up a new
+insurance plan, people often forget to take into consideration other periodic
+payments, or upcoming expenses, which may force one to postpone the purchase or
+vacation, causing grief to the family. This tool is intended to give a clear
+picture of one's financial health - that is, one knows for sure, how much
+disposable funds are available.
+
 
 Functional specs:
 ------------------------------------------------------------------------
@@ -151,3 +161,14 @@ So, the flow would look like:
    - making budgetary decisions per month is feasible
 5. Display as requested
 6. Cleanup
+
+
+TODO
+------------------------------------------------------------------------
+
+1. Determine the yrange in finplan.gp automatically.
+2. Remove BSDism from the Makefile. It should compile on Linux system as well.
+3. If the funds exceed the expenses, the dump routine should list the expenses
+   for the month.
+4. In general, it would be good to have option to display expenses details
+   along with the total expenses.

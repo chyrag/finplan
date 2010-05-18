@@ -70,6 +70,8 @@ initialcapitalorsavings: CHAR SEP NUMBER
 			 */
 			intendedsavings = (intendedsavings)?:$3;
 			break;
+		default:
+			return -1;
 		}
 	}
 	;
@@ -108,7 +110,6 @@ monthlyexpenseorincome: CHAR SEP COMMENT SEP NUMBER
 			break;
 		default:
 			return -1;
-			break;
 		}
 
 		STAILQ_INSERT_TAIL(&headp, e, next);

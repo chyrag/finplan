@@ -247,7 +247,7 @@ calculate_expenses(int display, struct monthlyexp *exp, struct expense_hdr *head
 			warnx(NOHOPE_ERR_MSG REQ_INFO_MSG,
 					monthname(rm), ry,
 					exp[i].expenses, funds,
-					savings);
+					savings, monthlyincome);
 			display_finances(display, exp, i + 1, 1);
 			return -1;
 
