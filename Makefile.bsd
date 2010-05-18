@@ -7,13 +7,14 @@ SRCS=	\
 CFLAGS = -Wall -g
 
 NO_MAN = yes
-CLEANFILES = gpdata
-
-test: $(PROG)
-	$(PROG) -v -i 75000 < finplan.in
+CLEANFILES = gpdata finplan.sh
+DISTCLEAN = cscope.*
 
 cscope:
 	find . -name "*.[chyl]" > cscope.files
 	cscope -buq -F cscope.files
+
+distclean:
+	rm -f $(CLEANFILES) $(DISTCLEAN)
 
 .include <bsd.prog.mk>

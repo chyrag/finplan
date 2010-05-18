@@ -11,7 +11,7 @@
 #define DEFAULT_TIMELINE	12	/* months */
 #define MONTHS_PER_YEAR		12
 
-#define REQ_INFO_MSG		"(need %d, have %d, savings %d)"
+#define REQ_INFO_MSG		"(need %d, have %d, savings %d, income %d)"
 #define NOSAVINGS_ERR_MSG	"warning: not enough funds to save %d for %s %d"
 #define USESAVINGS_ERR_MSG	"warning: would need to borrow %d from savings for %s %d"
 #define NOHOPE_ERR_MSG		"error: expenses for %s %d exceeds funds\n"

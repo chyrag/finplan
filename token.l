@@ -7,7 +7,7 @@
 %{
 #include <stdio.h>
 #include <string.h>
-#include "grammar.h"
+#include "y.tab.h"
 %}
 
 month	([jJ]an|[fF]eb|[mM]ar|[aA]pr|[mM]ay|[jJ]un|[jJ]ul|[aA]ug|[sS]ep|[oO]ct|[nN]ov|[dD]ec)

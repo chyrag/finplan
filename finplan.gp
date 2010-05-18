@@ -4,7 +4,7 @@
 set style fill solid 1.00 border -1
 set style data histogram
 set style histogram cluster gap 1
-set yrange [0:150000]
+set yrange [0:MAX_Y_RANGE]
 set ylabel "Expenses"
 set xlabel "Months"
 
